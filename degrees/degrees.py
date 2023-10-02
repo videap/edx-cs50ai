@@ -1,7 +1,7 @@
 import csv
 import sys
 
-from util import Node, StackFrontier, QueueFrontier
+from util import Node, StackFrontier, QueueFrontier, person_name_for_id, movie_for_id
 
 # Maps names to a set of corresponding person_ids
 names = {}
@@ -53,22 +53,23 @@ def load_data(directory):
 
 
 def main():
-    if len(sys.argv) > 2:
-        sys.exit("Usage: python degrees.py [directory]")
-    directory = sys.argv[1] if len(sys.argv) == 2 else "large"
+    if len(sys.argv) > 4:
+        sys.exit("Usage: python degrees.py [directory] [First Artist] [Second Artist]")
+    directory = sys.argv[1] if len(sys.argv) >= 2 else "large"
 
     # Load data from files into memory
     print("Loading data...")
     load_data(directory)
     print("Data loaded.")
 
-    source = person_id_for_name(input("Name: "))
+    source = person_id_for_name(sys.argv[2]) or person_id_for_name(input("Name: "))
     if source is None:
         sys.exit("Person not found.")
-    target = person_id_for_name(input("Name: "))
+    target = person_id_for_name(sys.argv[3]) or person_id_for_name(input("Name: "))
     if target is None:
         sys.exit("Person not found.")
 
+    # test()
     path = shortest_path(source, target)
 
     if path is None:
@@ -84,6 +85,11 @@ def main():
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
 
+def test():
+    print(neighbors_for_person(1))
+
+    exit(0)
+
 def shortest_path(source, target):
     """
     Returns the shortest list of (movie_id, person_id) pairs
@@ -91,9 +97,43 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    InitialNode = Node(source, None, None)
+    Frontier = StackFrontier()
+    solved = False
 
-    # TODO
-    raise NotImplementedError
+    Frontier.add(InitialNode)
+
+    while solved == False:
+
+        #remove next node from the frontier
+        CurrentNode = Frontier.remove()
+
+        if CurrentNode.state == target:
+            print("SOLUTION FOUND")
+            solved = True
+            # break
+
+        #get neighbours
+        neighbors = neighbors_for_person(CurrentNode.state)
+
+        for n in neighbors:
+            NewNode = Node(n[1], CurrentNode.state, n[0])
+            Frontier.add(NewNode)
+
+        Frontier.show(people,movies)
+
+
+
+    path=None
+
+    # should return array of tuples (movie, person)
+    return path
+
+
+def get_from_explored(explored_nodes, state, action):
+    for node in explored_nodes:
+        if node.state == state and node.action == action:
+            return node
 
 
 def person_id_for_name(name):
@@ -122,16 +162,18 @@ def person_id_for_name(name):
         return person_ids[0]
 
 
+
 def neighbors_for_person(person_id):
     """
     Returns (movie_id, person_id) pairs for people
     who starred with a given person.
     """
-    movie_ids = people[person_id]["movies"]
+    movie_ids = people[f"{person_id}"]["movies"]
     neighbors = set()
     for movie_id in movie_ids:
-        for person_id in movies[movie_id]["stars"]:
-            neighbors.add((movie_id, person_id))
+        for co_star in movies[f"{movie_id}"]["stars"]:
+            neighbors.add((movie_id, co_star))
+
     return neighbors
 
 
