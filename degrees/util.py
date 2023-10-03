@@ -5,7 +5,7 @@ class Node():
         self.action = action
     def __eq__(self, other):
         if isinstance(other, Node):
-            return self.state == other.state and self.action == other.action
+            return self.state == other.state
         else:
             return False
 
@@ -35,6 +35,30 @@ class StackFrontier():
             self.explored.append(node)
             return node
 
+
+
+class QueueFrontier(StackFrontier):
+    def __init__(self):
+        self.frontier = []
+        self.explored = []
+
+    def add(self, node):
+        if self.not_duplicated(node):
+            self.frontier.append(node)
+
+    def not_duplicated(self, node):
+        explored = any(explored_node == node for explored_node in self.explored) or any(frontier_node == node for frontier_node in self.frontier)
+        return not explored
+
+    def remove(self):
+        if self.empty():
+            raise Exception("empty frontier")
+        else:
+            node = self.frontier[0]
+            self.frontier = self.frontier[1:]
+            self.explored.append(node)
+            return node
+
     def show(self, people, movies):
         print("----------------------------------------")
         print("The frontier is:")
@@ -51,15 +75,6 @@ class StackFrontier():
 
 
 
-class QueueFrontier(StackFrontier):
-
-    def remove(self):
-        if self.empty():
-            raise Exception("empty frontier")
-        else:
-            node = self.frontier[0]
-            self.frontier = self.frontier[1:]
-            return node
 
 def person_name_for_id(id, people):
     try:

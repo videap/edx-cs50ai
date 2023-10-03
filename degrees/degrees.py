@@ -98,7 +98,7 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
     InitialNode = Node(source, None, None)
-    Frontier = StackFrontier()
+    Frontier = QueueFrontier()
     solved = False
 
     Frontier.add(InitialNode)
@@ -106,7 +106,10 @@ def shortest_path(source, target):
     while solved == False:
 
         #remove next node from the frontier
-        CurrentNode = Frontier.remove()
+        try:
+            CurrentNode = Frontier.remove()
+        except:
+            break
 
         if CurrentNode.state == target:
             print("SOLUTION FOUND")
@@ -116,15 +119,30 @@ def shortest_path(source, target):
         #get neighbours
         neighbors = neighbors_for_person(CurrentNode.state)
 
+        #add them to frontier
         for n in neighbors:
             NewNode = Node(n[1], CurrentNode.state, n[0])
             Frontier.add(NewNode)
 
-        Frontier.show(people,movies)
+        # Frontier.show(people,movies)
+
+    if solved:
+        path=[(CurrentNode.action, CurrentNode.state)]
+
+
+        while CurrentNode.parent != source:
+            CurrentNode = get_from_explored(Frontier.explored, CurrentNode.parent, CurrentNode.action)
+            path.append((CurrentNode.action, CurrentNode.state))
+        path.reverse()
+    else:
+        path = None
+
+    arr = []
+    arr.reverse
 
 
 
-    path=None
+
 
     # should return array of tuples (movie, person)
     return path
@@ -132,8 +150,11 @@ def shortest_path(source, target):
 
 def get_from_explored(explored_nodes, state, action):
     for node in explored_nodes:
-        if node.state == state and node.action == action:
+        print(f"Checking state {node.state} if it's equeal to {state}, and also {node.action} is equal to {action}")
+        if node.state == state:
+            print("found it!")
             return node
+    return None
 
 
 def person_id_for_name(name):
