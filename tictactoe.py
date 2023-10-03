@@ -51,7 +51,7 @@ def player(board):
     #sum of board is 9 -> return "Game Over"
 
     if sum_of_board == 9:
-        return "Game Over"
+        return None
 
     remainder = sum_of_board % 2
     return "X" if remainder == 0 else "O"
@@ -117,8 +117,7 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
-
+    return bool(winner(board) or not player(board))
 
 def utility(board):
     """
@@ -136,7 +135,8 @@ def minimax(board):
 
 if __name__ == "__main__":
 
-    initial = create_board(EMPTY,X, O, X, O, EMPTY, O, EMPTY, EMPTY)
+    initial = create_board(X,EMPTY, EMPTY, X, O, EMPTY, X, O, EMPTY)
+    t = terminal(initial)
     w = winner(initial)
-
-    print(w)
+    print(f"winner is {w}")
+    print(t)
