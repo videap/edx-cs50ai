@@ -18,6 +18,12 @@ def initial_state():
             [EMPTY, EMPTY, EMPTY]]
 
 
+def create_board(a,b,c,d,e,f,g,h,i):
+    return [[a, b, c],
+            [d, e, f],
+            [g, h, i]]
+
+
 def player(board):
     """
     Returns player who has the next turn on a board.
@@ -30,13 +36,12 @@ def player(board):
 
     #sum of board is odd -> turn of O
     #sum of board is even -> turn of X
-    #sum of board is 9 -> Raise error "Game is Over"
+    #sum of board is 9 -> return "Game Over"
 
     if sum_of_board == 9:
-        raise Exception("Game is Over")
+        return "Game Over"
 
     remainder = sum_of_board % 2
-
     return "X" if remainder == 0 else "O"
 
 
@@ -45,7 +50,15 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    raise NotImplementedError
+    actions = set()
+    for ix,i in enumerate(board):
+        for jx,j in enumerate(i):
+            if j == EMPTY:
+                actions.add((ix, jx))
+
+    return actions
+
+
 
 
 def result(board, action):
@@ -85,5 +98,7 @@ def minimax(board):
 
 if __name__ == "__main__":
 
-    initial = initial_state()
-    print(player(initial))
+    initial = create_board(X,O,X,X,O,X,O,X,O)
+    print(initial)
+    a = actions(initial)
+    print(a)
