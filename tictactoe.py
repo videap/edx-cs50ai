@@ -23,6 +23,18 @@ def create_board(a,b,c,d,e,f,g,h,i):
             [d, e, f],
             [g, h, i]]
 
+def board_values(board):
+    """
+    This function returns the same board with the values
+    X = 1
+    O = -1
+    """
+    d = {"X": 1, "O": -1, None: 0}
+    for ix, i in enumerate(board):
+        for jx, j in enumerate(i):
+            board[ix][jx] = d[j]
+    return board
+
 
 def player(board):
     """
@@ -76,7 +88,29 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+    winner = None
+
+    #check horizontal
+    for line in range(3):
+        if board[line][0] == board[line][1] == board[line][2]:
+            winner = board[line][0]
+            return winner
+
+    #check vertical
+    for col in range(3):
+        if board[0][col] == board[1][col] == board[2][col]:
+            winner = board[0][col]
+            return winner
+
+    #check diagonals
+    if board[0][0] == board[1][1] == board[2][2]:
+        winner = board[0][0]
+        return winner
+    elif board[0][2] == board[1][1] == board[2][0]:
+        winner = board[0][2]
+        return winner
+
+    return winner
 
 
 def terminal(board):
@@ -102,6 +136,7 @@ def minimax(board):
 
 if __name__ == "__main__":
 
-    initial = create_board(EMPTY,O,X,X,O,X,EMPTY,X,O)
-    r = result(initial, (0,0))
-    print(r)
+    initial = create_board(EMPTY,X, O, X, O, EMPTY, O, EMPTY, EMPTY)
+    w = winner(initial)
+
+    print(w)
