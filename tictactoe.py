@@ -23,19 +23,6 @@ def create_board(a,b,c,d,e,f,g,h,i):
             [d, e, f],
             [g, h, i]]
 
-def board_values(board):
-    """
-    This function returns the same board with the values
-    X = 1
-    O = -1
-    """
-    d = {"X": 1, "O": -1, None: 0}
-    for ix, i in enumerate(board):
-        for jx, j in enumerate(i):
-            board[ix][jx] = d[j]
-    return board
-
-
 def player(board):
     """
     Returns player who has the next turn on a board.
@@ -123,8 +110,9 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
-
+    d = {"X": 1, "O": -1, None: 0}
+    w = winner(board)
+    return d[w]
 
 def minimax(board):
     """
@@ -135,8 +123,8 @@ def minimax(board):
 
 if __name__ == "__main__":
 
-    initial = create_board(X,EMPTY, EMPTY, X, O, EMPTY, X, O, EMPTY)
+    initial = create_board(O,X,X,X,O,O,X,O,X)
     t = terminal(initial)
-    w = winner(initial)
-    print(f"winner is {w}")
+    w = utility(initial)
+    print(f"utility is {w}")
     print(t)
