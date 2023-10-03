@@ -65,8 +65,12 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    raise NotImplementedError
-
+    if board[action[0]][action[1]] != EMPTY:
+        raise Exception("Invalid action")
+    else:
+        p = player(board)
+        board[action[0]][action[1]] = p
+        return board
 
 def winner(board):
     """
@@ -98,7 +102,6 @@ def minimax(board):
 
 if __name__ == "__main__":
 
-    initial = create_board(X,O,X,X,O,X,O,X,O)
-    print(initial)
-    a = actions(initial)
-    print(a)
+    initial = create_board(EMPTY,O,X,X,O,X,EMPTY,X,O)
+    r = result(initial, (0,0))
+    print(r)
