@@ -18,12 +18,6 @@ def initial_state():
             [EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY]]
 
-
-def create_board(a,b,c,d,e,f,g,h,i):
-    return [[a, b, c],
-            [d, e, f],
-            [g, h, i]]
-
 def player(board):
     """
     Returns player who has the next turn on a board.
@@ -59,8 +53,6 @@ def actions(board):
     return actions
 
 
-
-
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
@@ -81,21 +73,21 @@ def winner(board):
 
     #check horizontal
     for line in range(3):
-        if board[line][0] == board[line][1] == board[line][2]:
+        if board[line][0] == board[line][1] == board[line][2] != None:
             winner = board[line][0]
             return winner
 
     #check vertical
     for col in range(3):
-        if board[0][col] == board[1][col] == board[2][col]:
+        if board[0][col] == board[1][col] == board[2][col] != None:
             winner = board[0][col]
             return winner
 
     #check diagonals
-    if board[0][0] == board[1][1] == board[2][2]:
+    if board[0][0] == board[1][1] == board[2][2] != None:
         winner = board[0][0]
         return winner
-    elif board[0][2] == board[1][1] == board[2][0]:
+    elif board[0][2] == board[1][1] == board[2][0] != None:
         winner = board[0][2]
         return winner
 
@@ -123,42 +115,34 @@ def minimax(board):
     # player X wants to maximize, player O wants to minimize
     p = player(board)
     if p == X:
-        return max_value(board)
+        return max_value(board)[1]
     elif p == O:
-        return min_value(board)
+        return min_value(board)[1]
 
 def max_value(board):
     if terminal(board):
-        return utility(board)
+        return (utility(board), None)
     else:
         moves = actions(board)
         value = -100
         for m in moves:
             next_board = result(board, m)
-            mx = max(value, min_value(next_board))
-        return mx
+            mx = max(value, min_value(next_board)[0])
+            if mx > value:
+                value = mx
+                best_move = m
+        return (value, best_move)
 
 def min_value(board):
     if terminal(board):
-        return utility(board)
+        return (utility(board), None)
     else:
         moves = actions(board)
         value = 100
         for m in moves:
             next_board = result(board, m)
-            mn = min(value, max_value(next_board))
-        return mn
-
-
-
-if __name__ == "__main__":
-
-    initial = [[O, X, O],
-                [X, X, O],
-                [X, EMPTY, EMPTY]]
-
-    for line in initial:
-        print(line)
-    print(f"Player {player(initial)} will play:")
-    m = minimax(initial)
-    print(m)
+            mn = min(value, max_value(next_board)[0])
+            if mn < value:
+                value = mn
+                best_move = m
+        return (value, best_move)
