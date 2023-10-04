@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
@@ -68,8 +69,9 @@ def result(board, action):
         raise Exception("Invalid action")
     else:
         p = player(board)
-        board[action[0]][action[1]] = p
-        return board
+        new_board = copy.deepcopy(board)
+        new_board[action[0]][action[1]] = p
+        return new_board
 
 def winner(board):
     """
@@ -118,13 +120,45 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    # player X wants to maximize, player O wants to minimize
+    p = player(board)
+    if p == X:
+        return max_value(board)
+    elif p == O:
+        return min_value(board)
+
+def max_value(board):
+    if terminal(board):
+        return utility(board)
+    else:
+        moves = actions(board)
+        value = -100
+        for m in moves:
+            next_board = result(board, m)
+            mx = max(value, min_value(next_board))
+        return mx
+
+def min_value(board):
+    if terminal(board):
+        return utility(board)
+    else:
+        moves = actions(board)
+        value = 100
+        for m in moves:
+            next_board = result(board, m)
+            mn = min(value, max_value(next_board))
+        return mn
+
 
 
 if __name__ == "__main__":
 
-    initial = create_board(O,X,X,X,O,O,X,O,X)
-    t = terminal(initial)
-    w = utility(initial)
-    print(f"utility is {w}")
-    print(t)
+    initial = [[O, X, O],
+                [X, X, O],
+                [X, EMPTY, EMPTY]]
+
+    for line in initial:
+        print(line)
+    print(f"Player {player(initial)} will play:")
+    m = minimax(initial)
+    print(m)
